@@ -5,13 +5,15 @@ AWS resource models for EKS components.
 from datetime import datetime, UTC
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 from .enums import AddonStatus, ApplicationStatus, NodeGroupStatus, SeverityLevel
 
 
 class NodeGroupInfo(BaseModel):
     """Information about an EKS node group."""
+
+    model_config = ConfigDict(use_enum_values=True)
 
     name: str = Field(..., description="Node group name")
     status: NodeGroupStatus = Field(..., description="Current node group status")
@@ -34,12 +36,11 @@ class NodeGroupInfo(BaseModel):
         None, description="Last modification timestamp"
     )
 
-    class Config:
-        use_enum_values = True
-
 
 class AddonInfo(BaseModel):
     """Information about an EKS addon."""
+
+    model_config = ConfigDict(use_enum_values=True)
 
     name: str = Field(..., description="Addon name")
     status: AddonStatus = Field(..., description="Current addon status")
@@ -57,12 +58,11 @@ class AddonInfo(BaseModel):
         None, description="Last modification timestamp"
     )
 
-    class Config:
-        use_enum_values = True
-
 
 class ApplicationInfo(BaseModel):
     """Information about a deployed application."""
+
+    model_config = ConfigDict(use_enum_values=True)
 
     name: str = Field(..., description="Application name")
     namespace: str = Field(..., description="Kubernetes namespace")
@@ -97,12 +97,11 @@ class ApplicationInfo(BaseModel):
     created_at: Optional[datetime] = Field(None, description="Creation timestamp")
     updated_at: Optional[datetime] = Field(None, description="Last update timestamp")
 
-    class Config:
-        use_enum_values = True
-
 
 class DeprecatedAPIInfo(BaseModel):
     """Information about deprecated Kubernetes APIs."""
+
+    model_config = ConfigDict(use_enum_values=True)
 
     api_version: str = Field(..., description="Deprecated API version")
     kind: str = Field(..., description="Kubernetes resource kind")
@@ -125,6 +124,3 @@ class DeprecatedAPIInfo(BaseModel):
     detected_at: datetime = Field(
         default_factory=lambda: datetime.now(UTC), description="Detection timestamp"
     )
-
-    class Config:
-        use_enum_values = True

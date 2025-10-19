@@ -19,8 +19,38 @@ from .models import (
 # Import configuration management
 from .config import AgentConfig
 
+# Import logging utilities
+from .logger import (
+    LoggerConfig,
+    setup_logging,
+    get_logger,
+    get_default_logger,
+    init_default_logger,
+    log_exception,
+    log_upgrade_step,
+    log_aws_api_call,
+)
+
+# Import exception hierarchy
+from .exceptions import (
+    EKSUpgradeAgentError,
+    PerceptionError,
+    PlanningError,
+    ExecutionError,
+    ValidationError,
+    ConfigurationError,
+    AWSServiceError,
+    RollbackError,
+    create_perception_error,
+    create_execution_error,
+    create_validation_error,
+)
+
 __all__ = [
+    # Configuration
     "AgentConfig",
+    
+    # Data Models
     "ClusterState",
     "UpgradePlan",
     "UpgradeStep",
@@ -28,4 +58,27 @@ __all__ = [
     "BedrockAnalysisResult",
     "ComprehendEntity",
     "AWSAIConfig",
+    
+    # Logging
+    "LoggerConfig",
+    "setup_logging",
+    "get_logger",
+    "get_default_logger",
+    "init_default_logger",
+    "log_exception",
+    "log_upgrade_step",
+    "log_aws_api_call",
+    
+    # Exceptions
+    "EKSUpgradeAgentError",
+    "PerceptionError",
+    "PlanningError",
+    "ExecutionError",
+    "ValidationError",
+    "ConfigurationError",
+    "AWSServiceError",
+    "RollbackError",
+    "create_perception_error",
+    "create_execution_error",
+    "create_validation_error",
 ]

@@ -6,7 +6,7 @@ from datetime import datetime, timedelta, UTC
 from typing import Any, Dict, List, Optional, Union
 from uuid import uuid4
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict
 
 from .enums import SeverityLevel, ValidationStatus
 
@@ -39,6 +39,8 @@ class ValidationCriterion(BaseModel):
 class ValidationError(BaseModel):
     """Validation error details."""
 
+    model_config = ConfigDict(use_enum_values=True)
+
     error_id: str = Field(
         default_factory=lambda: str(uuid4()), description="Unique error ID"
     )
@@ -56,12 +58,11 @@ class ValidationError(BaseModel):
         default_factory=lambda: datetime.now(UTC), description="Error timestamp"
     )
 
-    class Config:
-        use_enum_values = True
-
 
 class ValidationResult(BaseModel):
     """Result of validation step execution."""
+
+    model_config = ConfigDict(use_enum_values=True)
 
     result_id: str = Field(
         default_factory=lambda: str(uuid4()), description="Unique result ID"
@@ -85,9 +86,6 @@ class ValidationResult(BaseModel):
     details: Dict[str, Any] = Field(
         default_factory=dict, description="Additional details"
     )
-
-    class Config:
-        use_enum_values = True
 
     @model_validator(mode="after")
     def validate_completion(self):

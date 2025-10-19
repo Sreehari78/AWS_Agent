@@ -6,7 +6,7 @@ from datetime import datetime, timedelta, UTC
 from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict
 
 from .enums import StrategyType, UpgradeStatus
 from .validation import ValidationCriterion, ValidationResult
@@ -63,6 +63,8 @@ class RollbackPlan(BaseModel):
 class UpgradeStep(BaseModel):
     """Individual step in an upgrade plan."""
 
+    model_config = ConfigDict(use_enum_values=True)
+
     step_id: str = Field(
         default_factory=lambda: str(uuid4()), description="Unique step ID"
     )
@@ -105,9 +107,6 @@ class UpgradeStep(BaseModel):
     )
     error_message: Optional[str] = Field(None, description="Error message if failed")
 
-    class Config:
-        use_enum_values = True
-
     @model_validator(mode="after")
     def validate_execution_times(self):
         if self.started_at and self.completed_at:
@@ -118,6 +117,8 @@ class UpgradeStep(BaseModel):
 
 class UpgradePlan(BaseModel):
     """Complete upgrade execution plan."""
+
+    model_config = ConfigDict(use_enum_values=True)
 
     plan_id: str = Field(
         default_factory=lambda: str(uuid4()), description="Unique plan ID"
@@ -161,9 +162,6 @@ class UpgradePlan(BaseModel):
     context: Dict[str, Any] = Field(
         default_factory=dict, description="Execution context"
     )
-
-    class Config:
-        use_enum_values = True
 
     @field_validator("steps")
     @classmethod
@@ -216,6 +214,8 @@ class UpgradePlan(BaseModel):
 class UpgradeResult(BaseModel):
     """Final result of an upgrade operation."""
 
+    model_config = ConfigDict(use_enum_values=True)
+
     result_id: str = Field(
         default_factory=lambda: str(uuid4()), description="Unique result ID"
     )
@@ -261,9 +261,6 @@ class UpgradeResult(BaseModel):
     artifacts: Dict[str, str] = Field(
         default_factory=dict, description="Generated artifacts"
     )
-
-    class Config:
-        use_enum_values = True
 
     @model_validator(mode="after")
     def validate_result_consistency(self):
