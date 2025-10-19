@@ -6,7 +6,7 @@ and make upgrade decisions using Claude 3 Sonnet.
 """
 
 import asyncio
-from src.eks_upgrade_agent.common.aws_ai import BedrockClient
+from src.eks_upgrade_agent.common.aws.bedrock import BedrockClient
 from src.eks_upgrade_agent.common.models.aws_ai import AWSAIConfig
 
 

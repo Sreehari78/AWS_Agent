@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional
 
 import structlog
 
-from ..models.aws_ai import BedrockAnalysisResult, AWSAIConfig
+from ...models.aws_ai import BedrockAnalysisResult, AWSAIConfig
 from .rate_limiter import RateLimiter, BedrockRateLimitError
 from .cost_tracker import CostTracker, BedrockCostThresholdError
 from .model_invoker import ModelInvoker

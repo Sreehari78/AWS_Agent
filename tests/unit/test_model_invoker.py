@@ -8,9 +8,9 @@ from unittest.mock import Mock, patch
 import pytest
 from botocore.exceptions import ClientError, BotoCoreError
 
-from src.eks_upgrade_agent.common.aws_ai.model_invoker import ModelInvoker
-from src.eks_upgrade_agent.common.aws_ai.rate_limiter import RateLimiter, BedrockRateLimitError
-from src.eks_upgrade_agent.common.aws_ai.cost_tracker import CostTracker, BedrockCostThresholdError
+from src.eks_upgrade_agent.common.aws.bedrock.model_invoker import ModelInvoker
+from src.eks_upgrade_agent.common.aws.bedrock.rate_limiter import RateLimiter, BedrockRateLimitError
+from src.eks_upgrade_agent.common.aws.bedrock.cost_tracker import CostTracker, BedrockCostThresholdError
 from src.eks_upgrade_agent.common.models.aws_ai import AWSAIConfig
 from src.eks_upgrade_agent.common.handler.aws_service import AWSServiceError
 

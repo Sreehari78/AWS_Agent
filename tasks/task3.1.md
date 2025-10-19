@@ -14,7 +14,7 @@ This document details the complete implementation of Amazon Bedrock integration 
 The Bedrock integration follows a modular architecture with clear separation of concerns:
 
 ```
-src/eks_upgrade_agent/common/aws_ai/
+src/eks_upgrade_agent/common/aws/bedrock/
 ├── __init__.py              # Module exports
 ├── bedrock_client.py        # Main client interface
 ├── rate_limiter.py          # Rate limiting functionality
@@ -191,7 +191,7 @@ config = AWSAIConfig(
 ### Basic Text Analysis
 
 ```python
-from src.eks_upgrade_agent.common.aws_ai import BedrockClient
+from src.eks_upgrade_agent.common.aws.bedrock import BedrockClient
 from src.eks_upgrade_agent.common.models.aws_ai import AWSAIConfig
 
 # Initialize client
@@ -362,11 +362,11 @@ The modular Bedrock integration provides a robust, scalable foundation for AI-po
 
 ### New Files
 
-- `src/eks_upgrade_agent/common/aws_ai/bedrock_client.py`
-- `src/eks_upgrade_agent/common/aws_ai/rate_limiter.py`
-- `src/eks_upgrade_agent/common/aws_ai/cost_tracker.py`
-- `src/eks_upgrade_agent/common/aws_ai/model_invoker.py`
-- `src/eks_upgrade_agent/common/aws_ai/prompt_templates.py`
+- `src/eks_upgrade_agent/common/aws/bedrock/bedrock_client.py`
+- `src/eks_upgrade_agent/common/aws/bedrock/rate_limiter.py`
+- `src/eks_upgrade_agent/common/aws/bedrock/cost_tracker.py`
+- `src/eks_upgrade_agent/common/aws/bedrock/model_invoker.py`
+- `src/eks_upgrade_agent/common/aws/bedrock/prompt_templates.py`
 - `tests/unit/test_bedrock_client.py`
 - `tests/unit/test_rate_limiter.py`
 - `tests/unit/test_cost_tracker.py`
@@ -375,7 +375,12 @@ The modular Bedrock integration provides a robust, scalable foundation for AI-po
 
 ### Modified Files
 
-- `src/eks_upgrade_agent/common/aws_ai/__init__.py` (updated exports)
+- `src/eks_upgrade_agent/common/aws/__init__.py` (new AWS module exports)
+- `src/eks_upgrade_agent/common/aws/bedrock/__init__.py` (bedrock module exports)
+
+### Removed Files
+
+- `src/eks_upgrade_agent/common/aws_ai/` (entire folder removed for cleaner structure)
 
 ### Test Results
 

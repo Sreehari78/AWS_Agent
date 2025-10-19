@@ -143,11 +143,11 @@
 - [x] 3.1 Set up Amazon Bedrock integration
 
   - **MODULAR BEDROCK INTEGRATION IMPLEMENTED** - Transformed monolithic approach into maintainable architecture:
-    - **BedrockClient** (`aws_ai/bedrock_client.py`) - Main interface with high-level analysis methods
-    - **RateLimiter** (`aws_ai/rate_limiter.py`) - Sliding window rate limiting (60 req/min configurable)
-    - **CostTracker** (`aws_ai/cost_tracker.py`) - Daily cost tracking with automatic UTC reset
-    - **ModelInvoker** (`aws_ai/model_invoker.py`) - Low-level invocation with exponential backoff retry
-    - **PromptTemplates** (`aws_ai/prompt_templates.py`) - 5 specialized templates for different scenarios
+    - **BedrockClient** (`aws/bedrock/bedrock_client.py`) - Main interface with high-level analysis methods
+    - **RateLimiter** (`aws/bedrock/rate_limiter.py`) - Sliding window rate limiting (60 req/min configurable)
+    - **CostTracker** (`aws/bedrock/cost_tracker.py`) - Daily cost tracking with automatic UTC reset
+    - **ModelInvoker** (`aws/bedrock/model_invoker.py`) - Low-level invocation with exponential backoff retry
+    - **PromptTemplates** (`aws/bedrock/prompt_templates.py`) - 5 specialized templates for different scenarios
   - **PRODUCTION-READY FEATURES IMPLEMENTED**:
     - **Claude 3 Sonnet Integration**: Full support with structured JSON response parsing
     - **Retry Logic**: 3-attempt exponential backoff (4-10 seconds) for resilient API calls

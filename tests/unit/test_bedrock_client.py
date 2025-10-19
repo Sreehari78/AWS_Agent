@@ -7,7 +7,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from src.eks_upgrade_agent.common.aws_ai.bedrock_client import BedrockClient
+from src.eks_upgrade_agent.common.aws.bedrock.bedrock_client import BedrockClient
 from src.eks_upgrade_agent.common.models.aws_ai import AWSAIConfig, BedrockAnalysisResult
 
 
@@ -25,9 +25,9 @@ def aws_ai_config():
 @pytest.fixture
 def mock_components():
     """Mock all component dependencies."""
-    with patch("src.eks_upgrade_agent.common.aws_ai.bedrock_client.RateLimiter") as mock_rate_limiter, \
-         patch("src.eks_upgrade_agent.common.aws_ai.bedrock_client.CostTracker") as mock_cost_tracker, \
-         patch("src.eks_upgrade_agent.common.aws_ai.bedrock_client.ModelInvoker") as mock_model_invoker:
+    with patch("src.eks_upgrade_agent.common.aws.bedrock.bedrock_client.RateLimiter") as mock_rate_limiter, \
+         patch("src.eks_upgrade_agent.common.aws.bedrock.bedrock_client.CostTracker") as mock_cost_tracker, \
+         patch("src.eks_upgrade_agent.common.aws.bedrock.bedrock_client.ModelInvoker") as mock_model_invoker:
         
         yield {
             "rate_limiter": mock_rate_limiter.return_value,

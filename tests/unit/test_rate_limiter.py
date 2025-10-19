@@ -5,7 +5,7 @@ Unit tests for rate limiter functionality.
 import time
 import pytest
 
-from src.eks_upgrade_agent.common.aws_ai.rate_limiter import (
+from src.eks_upgrade_agent.common.aws.bedrock.rate_limiter import (
     RateLimiter,
     BedrockRateLimitError,
 )

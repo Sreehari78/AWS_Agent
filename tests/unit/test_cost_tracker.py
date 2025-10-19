@@ -5,7 +5,7 @@ Unit tests for cost tracking functionality.
 from datetime import datetime, UTC
 import pytest
 
-from src.eks_upgrade_agent.common.aws_ai.cost_tracker import (
+from src.eks_upgrade_agent.common.aws.bedrock.cost_tracker import (
     CostTracker,
     BedrockCostThresholdError,
 )

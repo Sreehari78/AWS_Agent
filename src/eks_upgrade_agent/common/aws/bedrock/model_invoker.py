@@ -16,8 +16,8 @@ from tenacity import (
 )
 import structlog
 
-from ..models.aws_ai import AWSAIConfig
-from ..handler.aws_service import AWSServiceError
+from ...models.aws_ai import AWSAIConfig
+from ...handler.aws_service import AWSServiceError
 from .rate_limiter import RateLimiter
 from .cost_tracker import CostTracker
 
