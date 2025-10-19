@@ -1,0 +1,238 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eks-upgrade-agent"
+version = "0.1.0"
+description = "Autonomous AI system for managing EKS cluster upgrades with zero downtime using AWS AI services"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+    {name = "EKS Upgrade Agent Team", email = "support@eks-upgrade-agent.com"}
+]
+maintainers = [
+    {name = "EKS Upgrade Agent Team", email = "support@eks-upgrade-agent.com"}
+]
+keywords = [
+    "aws", "eks", "kubernetes", "upgrade", "ai", "bedrock", "comprehend", 
+    "blue-green", "zero-downtime", "devops", "infrastructure"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Systems Administration",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+requires-python = ">=3.9"
+dependencies = [
+    # Core AWS AI services
+    "boto3[bedrock]>=1.34.0",
+    "boto3[comprehend]>=1.34.0", 
+    "boto3[stepfunctions]>=1.34.0",
+    "botocore>=1.34.0",
+    
+    # Data validation and serialization
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    
+    # CLI framework
+    "typer[all]>=0.9.0",
+    "rich>=13.7.0",
+    
+    # Kubernetes integration
+    "kubernetes>=28.1.0",
+    "helm-python>=0.1.0",
+    
+    # Infrastructure as Code
+    "python-terraform>=0.19.0",
+    
+    # Web scraping and HTTP
+    "requests>=2.31.0",
+    "beautifulsoup4>=4.12.0",
+    "httpx>=0.26.0",
+    
+    # Configuration and logging
+    "pyyaml>=6.0.1",
+    "structlog>=23.2.0",
+    "colorlog>=6.8.0",
+    
+    # Async support
+    "asyncio>=3.4.3",
+    "aiofiles>=23.2.1",
+    
+    # Date and time handling
+    "python-dateutil>=2.8.2",
+    
+    # Retry and resilience
+    "tenacity>=8.2.3",
+    
+    # Progress tracking
+    "tqdm>=4.66.0",
+    
+    # JSON handling
+    "orjson>=3.9.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    # Testing
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
+    "pytest-xdist>=3.5.0",
+    "moto[all]>=4.2.0",  # AWS service mocking
+    
+    # Code quality
+    "black>=23.12.0",
+    "isort>=5.13.0",
+    "flake8>=7.0.0",
+    "mypy>=1.8.0",
+    "pylint>=3.0.0",
+    
+    # Security
+    "bandit>=1.7.5",
+    "safety>=2.3.0",
+    
+    # Documentation
+    "sphinx>=7.2.0",
+    "sphinx-rtd-theme>=2.0.0",
+    "sphinx-autodoc-typehints>=1.25.0",
+    
+    # Development tools
+    "pre-commit>=3.6.0",
+    "commitizen>=3.13.0",
+]
+
+test = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0", 
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
+    "moto[all]>=4.2.0",
+]
+
+docs = [
+    "sphinx>=7.2.0",
+    "sphinx-rtd-theme>=2.0.0",
+    "sphinx-autodoc-typehints>=1.25.0",
+    "myst-parser>=2.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/eks-upgrade-agent/eks-upgrade-agent"
+Documentation = "https://eks-upgrade-agent.readthedocs.io/"
+Repository = "https://github.com/eks-upgrade-agent/eks-upgrade-agent.git"
+"Bug Tracker" = "https://github.com/eks-upgrade-agent/eks-upgrade-agent/issues"
+Changelog = "https://github.com/eks-upgrade-agent/eks-upgrade-agent/blob/main/CHANGELOG.md"
+
+[project.scripts]
+eks-upgrade-agent = "eks_upgrade_agent.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"eks_upgrade_agent" = ["py.typed"]
+
+[tool.black]
+line-length = 88
+target-version = ['py39', 'py310', 'py311', 'py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["eks_upgrade_agent"]
+known_third_party = ["boto3", "botocore", "kubernetes", "pydantic", "typer"]
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = [
+    "terraform.*",
+    "helm.*",
+    "moto.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --strict-markers --strict-config"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "unit: marks tests as unit tests",
+    "integration: marks tests as integration tests", 
+    "slow: marks tests as slow running",
+    "aws: marks tests that require AWS credentials",
+]
+
+[tool.coverage.run]
+source = ["src/eks_upgrade_agent"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.bandit]
+exclude_dirs = ["tests", "docs"]
+skips = ["B101", "B601"]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+tag_format = "v$version"
