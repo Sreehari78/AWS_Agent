@@ -16,7 +16,11 @@ from .models import (
     ValidationResult,
 )
 
+# Import configuration management
+from .config import AgentConfig
+
 __all__ = [
+    "AgentConfig",
     "ClusterState",
     "UpgradePlan",
     "UpgradeStep",

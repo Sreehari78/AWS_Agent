@@ -1,0 +1,115 @@
+# EKS Upgrade Agent Configuration
+# This is a comprehensive sample configuration file demonstrating all available options
+
+# Core agent configuration
+agent_name: "eks-upgrade-agent-prod"
+version: "0.1.0"
+environment: "production"
+debug: false
+dry_run: false
+
+# AWS AI Services Configuration
+aws_ai:
+  # Amazon Bedrock configuration
+  bedrock_model_id: "anthropic.claude-3-sonnet-20240229-v1:0"
+  bedrock_region: "us-east-1"
+  bedrock_max_tokens: 4096
+  bedrock_temperature: 0.1
+
+  # Amazon Comprehend configuration
+  comprehend_endpoint: null # Use default endpoint
+  comprehend_region: "us-east-1"
+  comprehend_language_code: "en"
+
+  # AWS Step Functions configuration
+  step_functions_arn: "arn:aws:states:us-east-1:123456789012:stateMachine:EKSUpgradeAgent"
+  step_functions_region: "us-east-1"
+
+  # Amazon EventBridge configuration
+  eventbridge_bus_name: "eks-upgrade-events"
+  eventbridge_region: "us-east-1"
+
+  # AWS Systems Manager configuration
+  ssm_parameter_prefix: "/eks-upgrade-agent/prod/"
+  ssm_region: "us-east-1"
+
+  # AWS credentials (optional - can use IAM roles, profiles, or environment variables)
+  aws_profile: "production" # Use AWS profile
+  aws_access_key_id: null
+  aws_secret_access_key: null
+  aws_session_token: null
+
+  # Cost and rate limiting
+  max_bedrock_requests_per_minute: 60
+  max_comprehend_requests_per_minute: 100
+  cost_threshold_usd: 500.0
+
+# Logging configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  structured: true
+  cloudwatch_enabled: true
+  cloudwatch_log_group: "/aws/eks-upgrade-agent/prod"
+  cloudwatch_log_stream: "agent-{instance_id}"
+  file_enabled: true
+  file_path: "logs/eks-upgrade-agent.log"
+  max_file_size: "50MB"
+  backup_count: 10
+
+# Security configuration
+security:
+  use_ssm_parameters: true
+  ssm_parameter_prefix: "/eks-upgrade-agent/prod/"
+  encrypt_sensitive_data: true
+  kms_key_id: "arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012"
+  credential_rotation_enabled: true
+  credential_rotation_interval_hours: 24
+
+# Upgrade configuration
+upgrade:
+  default_strategy: "blue_green"
+  max_parallel_upgrades: 2
+  upgrade_timeout_minutes: 180
+  rollback_timeout_minutes: 30
+  health_check_interval_seconds: 30
+  traffic_shift_intervals: [10, 25, 50, 75, 100]
+  validation_timeout_minutes: 15
+  backup_enabled: true
+  backup_retention_days: 14
+
+# Kubernetes configuration
+kubernetes:
+  kubeconfig_path: "~/.kube/config"
+  context: "production-cluster"
+  namespace: "eks-upgrade-agent"
+  timeout_seconds: 300
+  retry_attempts: 3
+  verify_ssl: true
+
+# Terraform configuration
+terraform:
+  binary_path: "/usr/local/bin/terraform"
+  working_directory: "./terraform/production"
+  state_backend: "s3"
+  state_bucket: "my-company-terraform-state"
+  state_key_prefix: "eks-upgrade-agent/prod/"
+  state_region: "us-east-1"
+  lock_table: "terraform-state-lock"
+  auto_approve: false
+  parallelism: 10
+
+# Progress tracking and artifacts
+progress_tracking_enabled: true
+artifacts_directory: "./artifacts"
+artifacts_s3_bucket: "my-company-eks-upgrade-artifacts"
+artifacts_retention_days: 90
+
+# Notification configuration
+notifications_enabled: true
+notification_channels: ["slack", "email", "sns"]
+slack_webhook_url: "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX"
+email_recipients:
+  - "devops-team@company.com"
+  - "sre-team@company.com"
+sns_topic_arn: "arn:aws:sns:us-east-1:123456789012:eks-upgrade-notifications"
