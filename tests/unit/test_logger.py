@@ -14,18 +14,20 @@ from pathlib import Path
 import tempfile
 import json
 
-from src.eks_upgrade_agent.common.logger import (
+from src.eks_upgrade_agent.common.logging import (
     LoggerConfig,
-    CloudWatchHandler,
     setup_logging,
     get_logger,
     log_exception,
     log_upgrade_step,
     log_aws_api_call,
+)
+from src.eks_upgrade_agent.common.logging.handlers import CloudWatchHandler
+from src.eks_upgrade_agent.common.logging.processors import (
     add_context_processor,
     add_exception_processor,
 )
-from src.eks_upgrade_agent.common.exceptions import (
+from src.eks_upgrade_agent.common.handler import (
     EKSUpgradeAgentError,
     PerceptionError,
 )
@@ -192,7 +194,7 @@ class TestLoggingSetup:
             log_path = Path(tmp_file.name)
             assert log_path.exists()
     
-    @patch('src.eks_upgrade_agent.common.logger.CloudWatchHandler')
+    @patch('src.eks_upgrade_agent.common.logging.setup.CloudWatchHandler')
     def test_setup_logging_with_cloudwatch(self, mock_cloudwatch_handler):
         """Test setting up logging with CloudWatch integration."""
         mock_handler = Mock()

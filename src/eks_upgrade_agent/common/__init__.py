@@ -20,7 +20,7 @@ from .models import (
 from .config import AgentConfig
 
 # Import logging utilities
-from .logger import (
+from .logging import (
     LoggerConfig,
     setup_logging,
     get_logger,
@@ -32,7 +32,7 @@ from .logger import (
 )
 
 # Import exception hierarchy
-from .exceptions import (
+from .handler import (
     EKSUpgradeAgentError,
     PerceptionError,
     PlanningError,

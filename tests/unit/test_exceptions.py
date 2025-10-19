@@ -9,7 +9,7 @@ import pytest
 from datetime import datetime
 from unittest.mock import Mock
 
-from src.eks_upgrade_agent.common.exceptions import (
+from src.eks_upgrade_agent.common.handler import (
     EKSUpgradeAgentError,
     PerceptionError,
     PlanningError,
