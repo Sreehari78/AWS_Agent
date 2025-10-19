@@ -46,6 +46,10 @@ from .handler import (
     create_validation_error,
 )
 
+# Import progress tracking and test artifacts
+from .progress import ProgressTracker
+from .artifacts import TestArtifactsManager
+
 __all__ = [
     # Configuration
     "AgentConfig",
@@ -81,4 +85,8 @@ __all__ = [
     "create_perception_error",
     "create_execution_error",
     "create_validation_error",
+    
+    # Progress Tracking and Test Artifacts
+    "ProgressTracker",
+    "TestArtifactsManager",
 ]

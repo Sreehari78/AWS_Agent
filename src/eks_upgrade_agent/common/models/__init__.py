@@ -51,6 +51,24 @@ from .upgrade import (
 # Import cluster models
 from .cluster import ClusterState
 
+# Import progress tracking models
+from .progress import (
+    ProgressEvent,
+    ProgressStatus,
+    TaskProgress,
+    TaskType,
+    UpgradeProgress,
+)
+
+# Import test artifacts models
+from .artifacts import (
+    ArtifactCollection,
+    ArtifactStatus,
+    ArtifactType,
+    TestArtifact,
+    TestSession,
+)
+
 # Export all models for easy importing
 __all__ = [
     # Enums
@@ -82,4 +100,16 @@ __all__ = [
     "UpgradeResult",
     # Cluster Models
     "ClusterState",
+    # Progress Tracking Models
+    "ProgressEvent",
+    "ProgressStatus",
+    "TaskProgress",
+    "TaskType",
+    "UpgradeProgress",
+    # Test Artifacts Models
+    "ArtifactCollection",
+    "ArtifactStatus",
+    "ArtifactType",
+    "TestArtifact",
+    "TestSession",
 ]
