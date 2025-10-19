@@ -1,5 +1,9 @@
-# EKS Upgrade Agent Configuration
+# EKS Upgrade Agent Configuration - SAMPLE FILE
 # This is a comprehensive sample configuration file demonstrating all available options
+#
+# ⚠️  IMPORTANT: This file contains example values only!
+# Replace all placeholder values (YOUR_ACCOUNT_ID, YOUR_BUCKET, etc.) with your actual values
+# Never commit real credentials, API keys, or sensitive information to version control
 
 # Core agent configuration
 agent_name: "eks-upgrade-agent-prod"
@@ -22,7 +26,7 @@ aws_ai:
   comprehend_language_code: "en"
 
   # AWS Step Functions configuration
-  step_functions_arn: "arn:aws:states:us-east-1:123456789012:stateMachine:EKSUpgradeAgent"
+  step_functions_arn: "arn:aws:states:us-east-1:YOUR_ACCOUNT_ID:stateMachine:EKSUpgradeAgent"
   step_functions_region: "us-east-1"
 
   # Amazon EventBridge configuration
@@ -62,7 +66,7 @@ security:
   use_ssm_parameters: true
   ssm_parameter_prefix: "/eks-upgrade-agent/prod/"
   encrypt_sensitive_data: true
-  kms_key_id: "arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012"
+  kms_key_id: "arn:aws:kms:us-east-1:YOUR_ACCOUNT_ID:key/YOUR_KMS_KEY_ID"
   credential_rotation_enabled: true
   credential_rotation_interval_hours: 24
 
@@ -92,7 +96,7 @@ terraform:
   binary_path: "/usr/local/bin/terraform"
   working_directory: "./terraform/production"
   state_backend: "s3"
-  state_bucket: "my-company-terraform-state"
+  state_bucket: "YOUR_TERRAFORM_STATE_BUCKET"
   state_key_prefix: "eks-upgrade-agent/prod/"
   state_region: "us-east-1"
   lock_table: "terraform-state-lock"
@@ -102,14 +106,14 @@ terraform:
 # Progress tracking and artifacts
 progress_tracking_enabled: true
 artifacts_directory: "./artifacts"
-artifacts_s3_bucket: "my-company-eks-upgrade-artifacts"
+artifacts_s3_bucket: "YOUR_ARTIFACTS_BUCKET"
 artifacts_retention_days: 90
 
 # Notification configuration
 notifications_enabled: true
 notification_channels: ["slack", "email", "sns"]
-slack_webhook_url: "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX"
+slack_webhook_url: "https://hooks.slack.com/services/YOUR_SLACK_WEBHOOK_URL"
 email_recipients:
-  - "devops-team@company.com"
-  - "sre-team@company.com"
-sns_topic_arn: "arn:aws:sns:us-east-1:123456789012:eks-upgrade-notifications"
+  - "devops-team@your-company.com"
+  - "sre-team@your-company.com"
+sns_topic_arn: "arn:aws:sns:us-east-1:YOUR_ACCOUNT_ID:eks-upgrade-notifications"

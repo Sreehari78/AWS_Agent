@@ -315,4 +315,30 @@ public
 
 # Temporary folders
 tmp/
-temp/
+temp/# Add
+itional security patterns for EKS Upgrade Agent
+config.yaml
+config.yml
+*config.local.*
+*config.prod.*
+*config.production.*
+*.config.yaml
+*.config.yml
+.env.*
+!.env.example
+!.env.template
+
+# API keys and tokens
+*api-key*
+*api_key*
+*access-token*
+*access_token*
+*webhook*
+*secret*
+*credential*
+
+# AWS specific
+*aws-credentials*
+*aws_credentials*
+*.aws-config*
+*.aws_config*
