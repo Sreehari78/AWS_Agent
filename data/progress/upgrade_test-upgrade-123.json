@@ -1,0 +1,130 @@
+{
+  "upgrade_id": "test-upgrade-123",
+  "plan_id": "test-plan-123",
+  "cluster_name": "test-cluster",
+  "status": "failed",
+  "started_at": "2025-10-20 05:25:01.056236+00:00",
+  "completed_at": "2025-10-20 05:25:00.943173+00:00",
+  "duration": "-1 day, 23:59:59.947690",
+  "overall_percentage": 100.0,
+  "current_phase": "Test Phase",
+  "tasks": {
+    "task-1": {
+      "task_id": "task-1",
+      "task_name": "First Task",
+      "task_type": "upgrade_step",
+      "parent_task_id": null,
+      "status": "completed",
+      "started_at": "2025-10-20 05:25:00.869209+00:00",
+      "completed_at": "2025-10-20 05:25:00.869989+00:00",
+      "duration": "0:00:00.000780",
+      "percentage": 100.0,
+      "current_step": null,
+      "total_steps": null,
+      "completed_steps": 0,
+      "error_message": null,
+      "retry_count": 0,
+      "events": [
+        {
+          "event_id": "dff8b2af-1018-4b0f-b0e8-be9667094e9e",
+          "timestamp": "2025-10-20 05:25:00.869254+00:00",
+          "task_id": "task-1",
+          "task_type": "upgrade_step",
+          "status": "in_progress",
+          "message": "Task started",
+          "details": {},
+          "percentage": 0.0
+        },
+        {
+          "event_id": "0bae0e7e-97be-4aad-813f-cc86bb7b4dec",
+          "timestamp": "2025-10-20 05:25:00.870030+00:00",
+          "task_id": "task-1",
+          "task_type": "upgrade_step",
+          "status": "completed",
+          "message": "Task completed",
+          "details": {},
+          "percentage": 100.0
+        }
+      ]
+    },
+    "task-2": {
+      "task_id": "task-2",
+      "task_name": "Second Task",
+      "task_type": "upgrade_step",
+      "parent_task_id": null,
+      "status": "completed",
+      "started_at": "2025-10-20 05:25:00.870682+00:00",
+      "completed_at": "2025-10-20 05:25:00.871253+00:00",
+      "duration": "0:00:00.000571",
+      "percentage": 100.0,
+      "current_step": null,
+      "total_steps": null,
+      "completed_steps": 0,
+      "error_message": null,
+      "retry_count": 0,
+      "events": [
+        {
+          "event_id": "a643b7d6-3fb6-4611-bf29-5b7e0af77671",
+          "timestamp": "2025-10-20 05:25:00.870709+00:00",
+          "task_id": "task-2",
+          "task_type": "upgrade_step",
+          "status": "in_progress",
+          "message": "Task started",
+          "details": {},
+          "percentage": 0.0
+        },
+        {
+          "event_id": "0cadcd4c-c2f2-43aa-a2a2-f6e85144487c",
+          "timestamp": "2025-10-20 05:25:00.871286+00:00",
+          "task_id": "task-2",
+          "task_type": "upgrade_step",
+          "status": "completed",
+          "message": "Task completed",
+          "details": {},
+          "percentage": 100.0
+        }
+      ]
+    },
+    "task-3": {
+      "task_id": "task-3",
+      "task_name": "Third Task",
+      "task_type": "validation",
+      "parent_task_id": null,
+      "status": "completed",
+      "started_at": "2025-10-20 05:25:00.871809+00:00",
+      "completed_at": "2025-10-20 05:25:00.872389+00:00",
+      "duration": "0:00:00.000580",
+      "percentage": 100.0,
+      "current_step": null,
+      "total_steps": null,
+      "completed_steps": 0,
+      "error_message": null,
+      "retry_count": 0,
+      "events": [
+        {
+          "event_id": "44379cf9-965f-4d1b-b51e-1a6bf04b9f56",
+          "timestamp": "2025-10-20 05:25:00.871840+00:00",
+          "task_id": "task-3",
+          "task_type": "validation",
+          "status": "in_progress",
+          "message": "Task started",
+          "details": {},
+          "percentage": 0.0
+        },
+        {
+          "event_id": "6f4e2cbd-d461-4fac-95dc-2f8e8f376862",
+          "timestamp": "2025-10-20 05:25:00.872415+00:00",
+          "task_id": "task-3",
+          "task_type": "validation",
+          "status": "completed",
+          "message": "Task completed",
+          "details": {},
+          "percentage": 100.0
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "error_message": "Test error"
+  }
+}

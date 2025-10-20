@@ -70,7 +70,7 @@ class ProgressTracker:
         )
         
         # Initialize components
-        storage_path = storage_path or "./progress"
+        storage_path = storage_path or "./data"
         self.storage = ProgressStorage(storage_path, upgrade_id)
         self.notifier = EventBridgeNotifier(eventbridge_bus_name, aws_region)
         self.callbacks = CallbackManager()
@@ -94,8 +94,12 @@ class ProgressTracker:
         self.progress.start_upgrade(phase)
         self.storage.save_progress(self.progress)
         
-        # Send notification
-        self.notifier.send_upgrade_started(self.upgrade_id, self.cluster_name, phase)
+        # Send notification (with error handling)
+        try:
+            if self.notifier:
+                self.notifier.send_upgrade_started(self.upgrade_id, self.cluster_name, phase)
+        except Exception as e:
+            logger.error(f"Failed to send upgrade started notification: {e}")
         
         logger.info(f"Started upgrade tracking for {self.upgrade_id}")
     
@@ -104,9 +108,13 @@ class ProgressTracker:
         self.progress.complete_upgrade()
         self.storage.save_progress(self.progress)
         
-        # Send notification
-        duration_str = str(self.progress.duration) if self.progress.duration else None
-        self.notifier.send_upgrade_completed(self.upgrade_id, self.cluster_name, duration_str)
+        # Send notification (with error handling)
+        try:
+            if self.notifier:
+                duration_str = str(self.progress.duration) if self.progress.duration else None
+                self.notifier.send_upgrade_completed(self.upgrade_id, self.cluster_name, duration_str)
+        except Exception as e:
+            logger.error(f"Failed to send upgrade completed notification: {e}")
         
         logger.info(f"Completed upgrade tracking for {self.upgrade_id}")
     
@@ -115,8 +123,12 @@ class ProgressTracker:
         self.progress.fail_upgrade(error_message)
         self.storage.save_progress(self.progress)
         
-        # Send notification
-        self.notifier.send_upgrade_failed(self.upgrade_id, self.cluster_name, error_message)
+        # Send notification (with error handling)
+        try:
+            if self.notifier:
+                self.notifier.send_upgrade_failed(self.upgrade_id, self.cluster_name, error_message)
+        except Exception as e:
+            logger.error(f"Failed to send upgrade failed notification: {e}")
         
         logger.error(f"Upgrade {self.upgrade_id} failed: {error_message}")
     
@@ -134,6 +146,19 @@ class ProgressTracker:
         logger.debug(f"Added task {task_id}: {task_name}")
         return task
     
+    def add_tasks(self, tasks: list[TaskProgress]) -> None:
+        """Add multiple tasks to track."""
+        for task in tasks:
+            self.progress.add_task(
+                task.task_id, 
+                task.task_name, 
+                task.task_type, 
+                task.parent_task_id
+            )
+        self.storage.save_progress(self.progress)
+        
+        logger.debug(f"Added {len(tasks)} tasks")
+    
     def start_task(self, task_id: str, message: str = "Task started") -> Optional[ProgressEvent]:
         """Start a task."""
         task = self.progress.get_task(task_id)
@@ -146,6 +171,13 @@ class ProgressTracker:
         self._notify_event(event)
         self.callbacks.notify_status_change(task)
         
+        # Send EventBridge notification
+        try:
+            if self.notifier:
+                self.notifier.send_task_started(self.upgrade_id, self.cluster_name, task_id, task.task_name)
+        except Exception as e:
+            logger.error(f"Failed to send task started notification: {e}")
+        
         logger.info(f"Started task {task_id}: {message}")
         return event
     
@@ -157,9 +189,21 @@ class ProgressTracker:
             return None
         
         event = task.complete(message)
+        
+        # Recalculate overall progress
+        self._update_overall_progress()
+        
         self.storage.save_progress(self.progress)
         self._notify_event(event)
         self.callbacks.notify_status_change(task)
+        
+        # Send EventBridge notification
+        try:
+            if self.notifier:
+                duration_str = str(task.duration) if task.duration else None
+                self.notifier.send_task_completed(self.upgrade_id, self.cluster_name, task_id, task.task_name, duration_str)
+        except Exception as e:
+            logger.error(f"Failed to send task completed notification: {e}")
         
         logger.info(f"Completed task {task_id}: {message}")
         return event
@@ -175,6 +219,13 @@ class ProgressTracker:
         self.storage.save_progress(self.progress)
         self._notify_event(event)
         self.callbacks.notify_status_change(task)
+        
+        # Send EventBridge notification
+        try:
+            if self.notifier:
+                self.notifier.send_task_failed(self.upgrade_id, self.cluster_name, task_id, task.task_name, error_message)
+        except Exception as e:
+            logger.error(f"Failed to send task failed notification: {e}")
         
         logger.error(f"Task {task_id} failed: {error_message}")
         return event
@@ -193,6 +244,10 @@ class ProgressTracker:
             return None
         
         event = task.update_progress(percentage, message, **details)
+        
+        # Recalculate overall progress
+        self._update_overall_progress()
+        
         self.storage.save_progress(self.progress)
         self._notify_event(event)
         
@@ -213,18 +268,39 @@ class ProgressTracker:
         """Get a summary of the current progress."""
         active_tasks = self.progress.get_active_tasks()
         failed_tasks = self.progress.get_failed_tasks()
+        completed_tasks = self.progress.get_completed_tasks()
+        
+        # Get current task (most recent active or failed task)
+        current_task = None
+        if active_tasks:
+            current_task = {
+                "task_id": active_tasks[0].task_id,
+                "task_name": active_tasks[0].task_name,
+                "status": active_tasks[0].status.value.upper(),
+                "percentage": active_tasks[0].percentage
+            }
+        elif failed_tasks:
+            current_task = {
+                "task_id": failed_tasks[-1].task_id,
+                "task_name": failed_tasks[-1].task_name,
+                "status": failed_tasks[-1].status.value.upper(),
+                "percentage": failed_tasks[-1].percentage
+            }
         
         return {
             "upgrade_id": self.upgrade_id,
             "cluster_name": self.cluster_name,
-            "status": self.progress.status,
+            "status": self.progress.status.value.upper(),
             "overall_percentage": self.progress.overall_percentage,
+            "progress_percentage": self.progress.overall_percentage,  # Alias for compatibility
             "current_phase": self.progress.current_phase,
+            "current_task": current_task,
             "started_at": self.progress.started_at,
             "duration": str(self.progress.duration) if self.progress.duration else None,
             "total_tasks": len(self.progress.tasks),
             "active_tasks": len(active_tasks),
             "failed_tasks": len(failed_tasks),
+            "completed_tasks": len(completed_tasks),
             "active_task_names": [task.task_name for task in active_tasks],
             "failed_task_names": [task.task_name for task in failed_tasks]
         }
@@ -258,6 +334,38 @@ class ProgressTracker:
             ]
         }
     
+    def calculate_progress_percentage(self) -> float:
+        """Calculate overall progress percentage."""
+        return self.progress.overall_percentage
+    
+    def get_current_task(self) -> Optional[TaskProgress]:
+        """Get the currently active task."""
+        active_tasks = self.progress.get_active_tasks()
+        return active_tasks[0] if active_tasks else None
+    
+    def get_estimated_completion_time(self) -> Optional[str]:
+        """Get estimated completion time based on current progress."""
+        if not self.progress.started_at:
+            return None
+        
+        # If no progress yet, return None
+        if self.progress.overall_percentage <= 0:
+            return None
+        
+        # Simple estimation based on current progress rate
+        from datetime import datetime, timedelta
+        now = datetime.now()
+        started_at = self.progress.started_at.replace(tzinfo=None) if self.progress.started_at.tzinfo else self.progress.started_at
+        elapsed = now - started_at
+        
+        if self.progress.overall_percentage > 0:
+            total_estimated = elapsed * (100 / self.progress.overall_percentage)
+            remaining = total_estimated - elapsed
+            estimated_completion = now + remaining
+            return estimated_completion.isoformat()
+        
+        return None
+    
     # Callback management methods
     def add_event_callback(self, callback) -> None:
         """Add a callback for progress events."""
@@ -284,6 +392,14 @@ class ProgressTracker:
         # Send to WebSocket clients
         if self.websocket.get_client_count() > 0:
             asyncio.create_task(self.websocket.broadcast_event(event))
+    
+    def _update_overall_progress(self) -> None:
+        """Update overall progress percentage based on task completion."""
+        if not self.progress.tasks:
+            return
+        
+        total_percentage = sum(task.percentage for task in self.progress.tasks.values())
+        self.progress.overall_percentage = min(100.0, total_percentage / len(self.progress.tasks))
     
     def get_system_info(self) -> Dict[str, Any]:
         """Get information about the progress tracking system."""

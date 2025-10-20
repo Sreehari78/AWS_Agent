@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 from uuid import uuid4
 
-from ..models.artifacts import TestSession, ArtifactCollection
+from ..models.artifacts import SessionTestData, ArtifactCollection
 from ..logging.utils import log_exception
 
 logger = logging.getLogger(__name__)
@@ -28,7 +28,7 @@ class SessionManager:
         """
         self.base_directory = Path(base_directory)
         self.retention_days = retention_days
-        self._sessions: Dict[str, TestSession] = {}
+        self._sessions: Dict[str, SessionTestData] = {}
         
         # Ensure base directory exists
         self.base_directory.mkdir(parents=True, exist_ok=True)
@@ -44,7 +44,7 @@ class SessionManager:
         description: Optional[str] = None,
         s3_bucket: Optional[str] = None,
         s3_prefix: Optional[str] = None
-    ) -> TestSession:
+    ) -> SessionTestData:
         """
         Create a new test session.
         
@@ -57,7 +57,7 @@ class SessionManager:
             s3_prefix: Optional S3 key prefix
             
         Returns:
-            TestSession instance
+            SessionTestData instance
         """
         session_id = str(uuid4())
         session_name = session_name or f"upgrade-{upgrade_id}-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}"
@@ -67,7 +67,7 @@ class SessionManager:
         session_dir.mkdir(parents=True, exist_ok=True)
         
         # Create session
-        session = TestSession(
+        session = SessionTestData(
             session_id=session_id,
             name=session_name,
             description=description,
@@ -85,7 +85,7 @@ class SessionManager:
         logger.info(f"Created test session {session_id}: {session_name}")
         return session
     
-    def get_session(self, session_id: str) -> Optional[TestSession]:
+    def get_session(self, session_id: str) -> Optional[SessionTestData]:
         """Get a test session by ID."""
         return self._sessions.get(session_id)
     
@@ -183,11 +183,11 @@ class SessionManager:
         
         return session.get_session_summary()
     
-    def list_sessions(self) -> List[TestSession]:
+    def list_sessions(self) -> List[SessionTestData]:
         """Get list of all sessions."""
         return list(self._sessions.values())
     
-    def _save_session(self, session: TestSession) -> None:
+    def _save_session(self, session: SessionTestData) -> None:
         """Save session metadata to disk."""
         try:
             session_file = self.base_directory / f"session_{session.session_id}.json"
@@ -204,7 +204,7 @@ class SessionManager:
                     with open(session_file, 'r') as f:
                         data = json.load(f)
                     
-                    session = TestSession(**data)
+                    session = SessionTestData(**data)
                     self._sessions[session.session_id] = session
                     
                 except Exception as e:

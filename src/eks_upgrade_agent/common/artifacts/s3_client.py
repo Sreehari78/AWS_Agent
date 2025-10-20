@@ -9,7 +9,7 @@ from pathlib import Path
 import boto3
 from botocore.exceptions import ClientError, NoCredentialsError
 
-from ..models.artifacts import TestArtifact, ArtifactStatus
+from ..models.artifacts import ArtifactTestData, ArtifactStatus
 from ..logging.utils import log_exception
 
 logger = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ class S3ArtifactClient:
                 log_exception(logger, e, "Failed to create S3 client")
         return self._s3_client
     
-    def upload_artifact(self, artifact: TestArtifact) -> bool:
+    def upload_artifact(self, artifact: ArtifactTestData) -> bool:
         """
         Upload an artifact to S3.
         
@@ -80,7 +80,7 @@ class S3ArtifactClient:
             artifact.mark_failed(str(e))
             return False
     
-    def download_artifact(self, artifact: TestArtifact, local_path: str) -> bool:
+    def download_artifact(self, artifact: ArtifactTestData, local_path: str) -> bool:
         """
         Download an artifact from S3.
         
@@ -117,7 +117,7 @@ class S3ArtifactClient:
             log_exception(logger, e, f"Failed to download artifact {artifact.artifact_id}")
             return False
     
-    def delete_artifact(self, artifact: TestArtifact) -> bool:
+    def delete_artifact(self, artifact: ArtifactTestData) -> bool:
         """
         Delete an artifact from S3.
         
@@ -149,7 +149,7 @@ class S3ArtifactClient:
             log_exception(logger, e, f"Failed to delete artifact {artifact.artifact_id}")
             return False
     
-    def check_artifact_exists(self, artifact: TestArtifact) -> bool:
+    def check_artifact_exists(self, artifact: ArtifactTestData) -> bool:
         """
         Check if an artifact exists in S3.
         
@@ -180,7 +180,7 @@ class S3ArtifactClient:
             log_exception(logger, e, f"Error checking artifact {artifact.artifact_id}")
             return False
     
-    def _prepare_metadata(self, artifact: TestArtifact) -> Dict[str, str]:
+    def _prepare_metadata(self, artifact: ArtifactTestData) -> Dict[str, str]:
         """
         Prepare S3 metadata for artifact.
         

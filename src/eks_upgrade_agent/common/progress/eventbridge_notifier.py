@@ -129,6 +129,35 @@ class EventBridgeNotifier:
             "phase": phase
         })
     
+    def send_task_started(self, upgrade_id: str, cluster_name: str, task_id: str, task_name: str) -> bool:
+        """Send task started notification."""
+        return self.send_notification("task.started", {
+            "upgrade_id": upgrade_id,
+            "cluster_name": cluster_name,
+            "task_id": task_id,
+            "task_name": task_name
+        })
+    
+    def send_task_completed(self, upgrade_id: str, cluster_name: str, task_id: str, task_name: str, duration: Optional[str] = None) -> bool:
+        """Send task completed notification."""
+        return self.send_notification("task.completed", {
+            "upgrade_id": upgrade_id,
+            "cluster_name": cluster_name,
+            "task_id": task_id,
+            "task_name": task_name,
+            "duration": duration
+        })
+    
+    def send_task_failed(self, upgrade_id: str, cluster_name: str, task_id: str, task_name: str, error_message: str) -> bool:
+        """Send task failed notification."""
+        return self.send_notification("task.failed", {
+            "upgrade_id": upgrade_id,
+            "cluster_name": cluster_name,
+            "task_id": task_id,
+            "task_name": task_name,
+            "error_message": error_message
+        })
+    
     def is_enabled(self) -> bool:
         """Check if EventBridge notifications are enabled."""
         return self.bus_name is not None and self.client is not None

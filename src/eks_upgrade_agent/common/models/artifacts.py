@@ -32,7 +32,7 @@ class ArtifactStatus(str, Enum):
     FAILED = "failed"
 
 
-class TestArtifact(BaseModel):
+class ArtifactTestData(BaseModel):
     """Individual test artifact."""
     
     model_config = ConfigDict(use_enum_values=True)
@@ -129,7 +129,7 @@ class ArtifactCollection(BaseModel):
     task_id: Optional[str] = Field(None, description="Associated task ID")
     
     # Artifacts
-    artifacts: List[TestArtifact] = Field(
+    artifacts: List[ArtifactTestData] = Field(
         default_factory=list, description="Artifacts in collection"
     )
     
@@ -141,7 +141,7 @@ class ArtifactCollection(BaseModel):
         default_factory=dict, description="Collection metadata"
     )
     
-    def add_artifact(self, artifact: TestArtifact) -> None:
+    def add_artifact(self, artifact: ArtifactTestData) -> None:
         """Add an artifact to the collection."""
         # Set context information if not already set
         if self.upgrade_id and not artifact.upgrade_id:
@@ -151,11 +151,11 @@ class ArtifactCollection(BaseModel):
         
         self.artifacts.append(artifact)
     
-    def get_artifacts_by_type(self, artifact_type: ArtifactType) -> List[TestArtifact]:
+    def get_artifacts_by_type(self, artifact_type: ArtifactType) -> List[ArtifactTestData]:
         """Get artifacts by type."""
         return [a for a in self.artifacts if a.artifact_type == artifact_type]
     
-    def get_artifacts_by_status(self, status: ArtifactStatus) -> List[TestArtifact]:
+    def get_artifacts_by_status(self, status: ArtifactStatus) -> List[ArtifactTestData]:
         """Get artifacts by status."""
         return [a for a in self.artifacts if a.status == status]
     
@@ -168,7 +168,7 @@ class ArtifactCollection(BaseModel):
         return len(self.get_artifacts_by_status(ArtifactStatus.UPLOADED))
 
 
-class TestSession(BaseModel):
+class SessionTestData(BaseModel):
     """Test session containing multiple artifact collections."""
     
     session_id: str = Field(
@@ -222,7 +222,7 @@ class TestSession(BaseModel):
         """Get a collection by ID."""
         return self.collections.get(collection_id)
     
-    def get_all_artifacts(self) -> List[TestArtifact]:
+    def get_all_artifacts(self) -> List[ArtifactTestData]:
         """Get all artifacts from all collections."""
         artifacts = []
         for collection in self.collections.values():

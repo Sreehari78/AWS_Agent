@@ -10,8 +10,8 @@ from ..models.artifacts import (
     ArtifactCollection,
     ArtifactStatus,
     ArtifactType,
-    TestArtifact,
-    TestSession,
+    ArtifactTestData,
+    SessionTestData,
 )
 from .file_handler import FileHandler
 from .s3_client import S3ArtifactClient
@@ -68,7 +68,7 @@ class TestArtifactsManager:
         cluster_name: str,
         session_name: Optional[str] = None,
         description: Optional[str] = None
-    ) -> TestSession:
+    ) -> SessionTestData:
         """Create a new test session."""
         return self.session_manager.create_session(
             upgrade_id=upgrade_id,
@@ -79,7 +79,7 @@ class TestArtifactsManager:
             s3_prefix=self.s3_prefix
         )
     
-    def get_session(self, session_id: str) -> Optional[TestSession]:
+    def get_session(self, session_id: str) -> Optional[SessionTestData]:
         """Get a test session by ID."""
         return self.session_manager.get_session(session_id)
     
@@ -122,7 +122,7 @@ class TestArtifactsManager:
         step_id: Optional[str] = None,
         tags: Optional[List[str]] = None,
         **metadata
-    ) -> Optional[TestArtifact]:
+    ) -> Optional[ArtifactTestData]:
         """Add an artifact to a collection."""
         session = self.get_session(session_id)
         if not session:
@@ -160,7 +160,7 @@ class TestArtifactsManager:
             s3_key = f"{session.s3_prefix}/{relative_path}"
         
         # Create artifact
-        artifact = TestArtifact(
+        artifact = ArtifactTestData(
             name=artifact_name,
             description=description,
             artifact_type=artifact_type,
@@ -226,15 +226,15 @@ class TestArtifactsManager:
         return results
     
     # Search Operations
-    def search_artifacts(self, **criteria) -> List[TestArtifact]:
+    def search_artifacts(self, **criteria) -> List[ArtifactTestData]:
         """Search for artifacts based on criteria."""
         return self.search_engine.search_artifacts(**criteria)
     
-    def search_by_name(self, name_pattern: str, session_id: Optional[str] = None) -> List[TestArtifact]:
+    def search_by_name(self, name_pattern: str, session_id: Optional[str] = None) -> List[ArtifactTestData]:
         """Search artifacts by name pattern."""
         return self.search_engine.search_by_name(name_pattern, session_id)
     
-    def get_recent_artifacts(self, hours: int = 24, session_id: Optional[str] = None) -> List[TestArtifact]:
+    def get_recent_artifacts(self, hours: int = 24, session_id: Optional[str] = None) -> List[ArtifactTestData]:
         """Get artifacts created within the last N hours."""
         return self.search_engine.get_recent_artifacts(hours, session_id)
     
@@ -256,7 +256,7 @@ class TestArtifactsManager:
         self.session_manager.save_all_sessions()
         logger.info("TestArtifactsManager cleanup completed")
     
-    def _find_artifact_in_session(self, session: TestSession, artifact_id: str) -> Optional[TestArtifact]:
+    def _find_artifact_in_session(self, session: SessionTestData, artifact_id: str) -> Optional[ArtifactTestData]:
         """Find an artifact by ID within a session."""
         for collection in session.collections.values():
             for artifact in collection.artifacts:

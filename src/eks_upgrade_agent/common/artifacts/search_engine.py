@@ -8,8 +8,8 @@ from typing import Dict, List, Optional
 from ..models.artifacts import (
     ArtifactStatus,
     ArtifactType,
-    TestArtifact,
-    TestSession,
+    ArtifactTestData,
+    SessionTestData,
 )
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 class ArtifactSearchEngine:
     """Search engine for finding artifacts based on various criteria."""
     
-    def __init__(self, sessions: Dict[str, TestSession]):
+    def __init__(self, sessions: Dict[str, SessionTestData]):
         """
         Initialize search engine.
         
@@ -36,7 +36,7 @@ class ArtifactSearchEngine:
         status: Optional[ArtifactStatus] = None,
         collection_id: Optional[str] = None,
         upgrade_id: Optional[str] = None
-    ) -> List[TestArtifact]:
+    ) -> List[ArtifactTestData]:
         """
         Search for artifacts based on criteria.
         
@@ -70,7 +70,7 @@ class ArtifactSearchEngine:
         logger.debug(f"Found {len(results)} artifacts matching search criteria")
         return results
     
-    def search_by_name(self, name_pattern: str, session_id: Optional[str] = None) -> List[TestArtifact]:
+    def search_by_name(self, name_pattern: str, session_id: Optional[str] = None) -> List[ArtifactTestData]:
         """
         Search artifacts by name pattern.
         
@@ -100,7 +100,7 @@ class ArtifactSearchEngine:
         min_size: Optional[int] = None,
         max_size: Optional[int] = None,
         session_id: Optional[str] = None
-    ) -> List[TestArtifact]:
+    ) -> List[ArtifactTestData]:
         """
         Get artifacts within a size range.
         
@@ -137,7 +137,7 @@ class ArtifactSearchEngine:
         self,
         hours: int = 24,
         session_id: Optional[str] = None
-    ) -> List[TestArtifact]:
+    ) -> List[ArtifactTestData]:
         """
         Get artifacts created within the last N hours.
         
@@ -167,7 +167,7 @@ class ArtifactSearchEngine:
         logger.debug(f"Found {len(results)} artifacts created in last {hours} hours")
         return results
     
-    def get_artifacts_by_collection(self, collection_id: str) -> List[TestArtifact]:
+    def get_artifacts_by_collection(self, collection_id: str) -> List[ArtifactTestData]:
         """
         Get all artifacts in a specific collection.
         
@@ -228,7 +228,7 @@ class ArtifactSearchEngine:
         self, 
         session_id: Optional[str] = None, 
         upgrade_id: Optional[str] = None
-    ) -> List[TestSession]:
+    ) -> List[SessionTestData]:
         """Get list of sessions to search based on filters."""
         if session_id:
             session = self.sessions.get(session_id)
@@ -241,7 +241,7 @@ class ArtifactSearchEngine:
     
     def _matches_criteria(
         self,
-        artifact: TestArtifact,
+        artifact: ArtifactTestData,
         artifact_type: Optional[ArtifactType],
         tags: Optional[List[str]],
         task_id: Optional[str],

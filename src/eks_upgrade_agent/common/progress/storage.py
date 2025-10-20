@@ -31,7 +31,7 @@ class ProgressStorage:
             storage_path: Directory for storing progress files
             upgrade_id: Unique upgrade identifier
         """
-        self.storage_path = Path(storage_path)
+        self.storage_path = Path(storage_path) / "progress"
         self.upgrade_id = upgrade_id
         self.progress_file = self.storage_path / f"upgrade_{upgrade_id}.json"
         

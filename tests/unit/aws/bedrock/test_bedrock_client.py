@@ -110,8 +110,9 @@ class TestTextAnalysis:
 
     def test_analyze_text_custom_parameters(self, bedrock_client, mock_components):
         """Test text analysis with custom parameters."""
+        content_value = {"text": '{"findings": ["test"]}'}
         response_body = {
-            "content": [{"text": '{"findings": ["test"]}'}],
+            "content": [content_value],
             "usage": {"input_tokens": 50, "output_tokens": 25},
         }
         

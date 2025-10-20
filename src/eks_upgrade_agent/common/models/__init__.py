@@ -65,8 +65,8 @@ from .artifacts import (
     ArtifactCollection,
     ArtifactStatus,
     ArtifactType,
-    TestArtifact,
-    TestSession,
+    ArtifactTestData,
+    SessionTestData,
 )
 
 # Export all models for easy importing

@@ -131,6 +131,9 @@ class TaskProgress(BaseModel):
         """Mark task as completed."""
         self.completed_at = datetime.now(UTC)
         self.percentage = 100.0
+        # Calculate duration
+        if self.started_at and self.completed_at:
+            self.duration = self.completed_at - self.started_at
         return self.add_event(ProgressStatus.COMPLETED, message)
     
     def fail(self, error_message: str) -> ProgressEvent:
@@ -215,6 +218,9 @@ class UpgradeProgress(BaseModel):
         self.completed_at = datetime.now(UTC)
         self.status = ProgressStatus.COMPLETED
         self.overall_percentage = 100.0
+        # Calculate duration
+        if self.started_at and self.completed_at:
+            self.duration = self.completed_at - self.started_at
     
     def fail_upgrade(self, error_message: str) -> None:
         """Mark upgrade as failed."""
@@ -233,4 +239,11 @@ class UpgradeProgress(BaseModel):
         return [
             task for task in self.tasks.values()
             if task.status == ProgressStatus.FAILED
+        ]
+    
+    def get_completed_tasks(self) -> List[TaskProgress]:
+        """Get all completed tasks."""
+        return [
+            task for task in self.tasks.values()
+            if task.status == ProgressStatus.COMPLETED
         ]

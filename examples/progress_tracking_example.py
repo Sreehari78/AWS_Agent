@@ -38,7 +38,7 @@ async def main():
             upgrade_id="example-upgrade-001",
             plan_id="example-plan-001",
             cluster_name="example-cluster",
-            storage_path=temp_path / "progress",
+            storage_path=temp_path / "data",
             eventbridge_bus_name="example-bus",
             enable_websocket=False  # Disabled for example
         )

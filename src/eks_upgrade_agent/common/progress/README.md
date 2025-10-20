@@ -72,7 +72,7 @@ tracker = ProgressTracker(
     upgrade_id="upgrade-123",
     plan_id="plan-456",
     cluster_name="my-cluster",
-    storage_path="./progress",
+    storage_path="./data",
     eventbridge_bus_name="upgrade-events",
     enable_websocket=True
 )

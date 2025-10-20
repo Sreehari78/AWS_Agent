@@ -11,7 +11,7 @@ from ..handler import EKSUpgradeAgentError
 
 def log_exception(
     logger: FilteringBoundLogger,
-    exception: Exception,
+    exception,  # Can be Exception or str
     message: str = "An error occurred",
     **context
 ) -> None:
@@ -20,17 +20,23 @@ def log_exception(
     
     Args:
         logger: Logger instance
-        exception: Exception to log
+        exception: Exception to log or error message string
         message: Log message
         **context: Additional context to include
     """
-    if isinstance(exception, EKSUpgradeAgentError):
+    if isinstance(exception, str):
+        # Handle string error messages
+        logger.error(f"{message}: {exception}", **context)
+    elif isinstance(exception, EKSUpgradeAgentError):
         # Use the exception's structured data
         logger.error(
             message,
             exception_data=exception.to_dict(),
             **context
         )
+    elif exception is None:
+        # Handle None values gracefully
+        logger.error(message, **context)
     else:
         # Log regular exceptions
         logger.error(
@@ -42,9 +48,11 @@ def log_exception(
 
 def log_upgrade_step(
     logger: FilteringBoundLogger,
-    step_name: str,
-    step_id: str,
-    status: str,
+    step_name: Optional[str],
+    action: str,
+    cluster_name: Optional[str] = None,
+    upgrade_id: Optional[str] = None,
+    extra_context: Optional[dict] = None,
     **context
 ) -> None:
     """
@@ -53,25 +61,41 @@ def log_upgrade_step(
     Args:
         logger: Logger instance
         step_name: Name of the upgrade step
-        step_id: Unique step identifier
-        status: Step status (started, completed, failed)
+        action: Step action (start, complete, fail)
+        cluster_name: Target cluster name
+        upgrade_id: Unique upgrade identifier
+        extra_context: Additional context dictionary
         **context: Additional context to include
     """
-    logger.info(
-        f"Upgrade step {status}",
-        step_name=step_name,
-        step_id=step_id,
-        status=status,
+    step_name = step_name or "Unknown Step"
+    message = f"Upgrade step {step_name} {action}"
+    
+    log_context = {
+        "step_name": step_name,
+        "action": action,
+        "cluster_name": cluster_name,
+        "upgrade_id": upgrade_id,
         **context
-    )
+    }
+    
+    if extra_context:
+        log_context["extra"] = extra_context
+    
+    if action == "fail":
+        logger.error(message, **log_context)
+    else:
+        logger.info(message, **log_context)
 
 
 def log_aws_api_call(
     logger: FilteringBoundLogger,
-    service: str,
-    operation: str,
-    success: bool,
-    duration_ms: Optional[float] = None,
+    service: Optional[str],
+    operation: Optional[str],
+    cluster_name: Optional[str] = None,
+    duration: Optional[float] = None,
+    success: Optional[bool] = True,
+    error: Optional[str] = None,
+    request_id: Optional[str] = None,
     **context
 ) -> None:
     """
@@ -82,15 +106,41 @@ def log_aws_api_call(
         service: AWS service name
         operation: API operation name
         success: Whether the call succeeded
-        duration_ms: Call duration in milliseconds
+        cluster_name: Target cluster name
+        duration: Call duration in seconds
+        error: Error message if failed
+        request_id: AWS request ID
         **context: Additional context to include
     """
-    level = "info" if success else "error"
-    getattr(logger, level)(
-        f"AWS API call {('succeeded' if success else 'failed')}",
-        aws_service=service,
-        aws_operation=operation,
-        success=success,
-        duration_ms=duration_ms,
-        **context
-    )
+    service = service or "unknown"
+    operation = operation or "unknown"
+    
+    if success:
+        message = f"AWS {service} {operation} succeeded"
+        if request_id:
+            message += f" (request_id: {request_id})"
+        logger.info(
+            message,
+            aws_service=service,
+            aws_operation=operation,
+            cluster_name=cluster_name,
+            duration=duration,
+            request_id=request_id,
+            **context
+        )
+    else:
+        message = f"AWS {service} {operation} failed"
+        if error:
+            message += f": {error}"
+        if request_id:
+            message += f" (request_id: {request_id})"
+        logger.error(
+            message,
+            aws_service=service,
+            aws_operation=operation,
+            cluster_name=cluster_name,
+            duration=duration,
+            error=error,
+            request_id=request_id,
+            **context
+        )
